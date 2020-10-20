@@ -1,5 +1,5 @@
-var ctaFound = false;
-var findCTAInterval;
+var paywallFound = false;
+var findPaywallInterval;
 
 const model = new rw.HostedModel({
 	url: "https://andreas-matt-test-extra-small.hosted-models.runwayml.cloud/v1/",
@@ -7,36 +7,36 @@ const model = new rw.HostedModel({
 });
 
 (function() {
-	findCTAInterval = setInterval(findCTA, 500);
+	findPaywallInterval = setInterval(findPaywall, 500);
 })();
 
 
-function findCTA() {
-	if (!ctaFound) {
-		var cta = document.getElementById("gateway-content");
+function findPaywall() {
+	if (!paywallFound) {
+		var paywall = document.getElementById("gateway-content");
 
-		if (cta) {
-			clearInterval(findCTAInterval);
-			ctaFound = true;
+		if (paywall) {
+			clearInterval(findPaywallInterval);
+			paywallFound = true;
 
-
+			// Create fake news button
+			// TODO: style button
 			var fakeNewsButton = document.createElement('button');
 			fakeNewsButton.id = 'injected-button'
-			fakeNewsButton.className = 'css-1dma08p';
+			fakeNewsButton.className = 'css-1dma08p'; // This isn't doing anything anymore
 			fakeNewsButton.innerHTML = "Create Fake News";
 			fakeNewsButton.style.backgroundColor = "red";
 			fakeNewsButton.style.alignText = "center";
 			fakeNewsButton.onclick = makeFakeNews;
 
-			cta.insertBefore(fakeNewsButton, cta.childNodes[0]);
+			paywall.insertBefore(fakeNewsButton, paywall.childNodes[0]);
 		}
 	}
 }
 
 function makeFakeNews() {
+	// Do runway stuff
 	var prompt = document.getElementsByTagName("h1")[0].innerHTML +  document.getElementById("article-summary").innerHTML;
-
-
 	const inputs = {
 	  "prompt": prompt,
 	  "max_characters": 1024,
@@ -45,22 +45,23 @@ function makeFakeNews() {
 	};
 	model.query(inputs).then(outputs => {
 	  const { generated_text, encountered_end } = outputs;
-		console.log(generated_text);
-		console.log(outputs);
 		document.getElementsByClassName("css-158dogj")[0].innerHTML = generated_text.split(prompt)[1];
 	});
 
 
-	var cta = document.getElementById("gateway-content");
-	cta.style.display = "none";
+	// Get rid of paywall
+	var paywall = document.getElementById("gateway-content");
+	paywall.style.display = "none";
 	document.getElementsByClassName("css-1bd8bfl")[0].style.display = "none";
 	document.getElementsByClassName("css-mcm29f")[0].style.overflow = "scroll";
 
+	// Empty text from paragraphs
 	var paragraphs = document.getElementsByClassName("css-158dogj");
 	for(var i = 0; i < paragraphs.length; i++) {
 		paragraphs[i].innerHTML = "";
 	}
 
+	// Remove first image
 	var firstImage = document.getElementsByClassName("css-11cwn6f")[0];
 	console.log(firstImage);
 	firstImage.style.display = "none";
