@@ -1,0 +1,30 @@
+{
+  "name": "Fake News",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "Fake News",
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": true
+  },
+  "browser_action": {
+    "default_title": "Fake News!"
+  },
+  "permissions": [
+    "*://*.nytimes.com/*",
+    "tabs",
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "run_at": "document_end",
+      "matches": ["*://*.nytimes.com/*"],
+      "js": [
+        "hosted-model.js",
+        "inject.js"
+      ]
+    }
+  ]
+}
