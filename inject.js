@@ -7,13 +7,13 @@ var paywall;
 var PAYWALLID = "gateway-content"; // Used to query the paywall div
 var PAYWALLBTN = 'css-l33adv'; // Used to style our button
 var PAYWALLOVERLAY = "css-1bd8bfl"; // Used to remove paywall overlay
-var PAYWALLCONTENT = "css-1n69xkm";
+var PAYWALLCONTENT = "css-1n69xkm"; // Paywall content
 var PAYWALLSUBHEAD = "css-184j79q-RegiWallSubhead"; // Used to add our own text
 var MAINCONTENTAREA = "css-mcm29f"; // Used to reenable scrolling
 var SUBTITLE = "article-summary"; // Used to seed the article
+var TEXTCONTAINERS = "StoryBodyCompanionColumn";
 var PARAGRAPHS = "css-axufdj"; // Used to remove/update paragraphs
-var IMAGES = "css-11cwn6f"; // Used to remove/update images
-var CAPTIONS = "css-17ai7jg"; // Used to remove/update image captions
+var IMAGES = "css-79elbk"; // Used to remove images
 
 const model = new rw.HostedModel({
 	url: "https://ny-times-articles-1500-steps.hosted-models.runwayml.cloud/v1/",
@@ -58,27 +58,24 @@ function makeFakeNews() {
 	  "top_p": 0.9,
 	  "seed": 1000
 	};
-	
+
 	// TODO: do this iteratively and fill out some set of the paragraphs
 	model.query(inputs).then(outputs => {
 	  const { generated_text, encountered_end } = outputs;
-		// removeScanner();
 		removePayWall();
 		clearRealArticle();
 
 		var textOutput = generated_text.split(prompt)[1];
-		console.log("textOutput raw" + textOutput)
 		var deleteThisPartOfTheString = textOutput.split('.').pop();
-		
-		textOutput = textOutput.substring(0,textOutput.length - deleteThisPartOfTheString.length);	
 
-		//var generated_textTrimmed = generated_text.substring(0,generated_text.length - deleteThisPartOfTheString.length);	
-		
+		textOutput = textOutput.substring(0,textOutput.length - deleteThisPartOfTheString.length);
+
+		//var generated_textTrimmed = generated_text.substring(0,generated_text.length - deleteThisPartOfTheString.length);
+
 		document.getElementsByClassName(PARAGRAPHS)[0].innerHTML = textOutput;
 	});
 
 	addScanner();
-
 }
 
 function addScanner() {
@@ -95,7 +92,6 @@ function addScanner() {
 	paywall.appendChild(processingText);
 }
 
-
 function clearRealArticle() {
 	// Empty text from paragraphs
 	var paragraphs = document.getElementsByClassName(PARAGRAPHS);
@@ -103,13 +99,17 @@ function clearRealArticle() {
 		paragraphs[i].innerHTML = "";
 	}
 
-	// Remove first image
-	var firstImage = document.getElementsByClassName(IMAGES)[0];
-	console.log(firstImage);
-	firstImage.style.display = "none";
-	var caption = document.getElementsByClassName(CAPTIONS)[0];
-	console.log(caption);
-	caption.style.display = "none";
+	// Remove second story companion
+	document.getElementsByClassName(TEXTCONTAINERS)[1].remove();
+
+	// Remove all images but 1
+	var images = document.getElementsByClassName(IMAGES);
+	var imgArrayLength = images.length;
+	for (var i = 0; i < imgArrayLength; i++) {
+		if (i != 1) {
+			images[i].style.display = "none";
+		}
+	}
 }
 
 function removePayWall() {
