@@ -1,0 +1,19 @@
+.scanner-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 100vh;
+  background-color: black;
+  opacity: 0.5;
+  animation-name: scan;
+  animation-duration: 2s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate-reverse;
+}
+
+@keyframes scan {
+  from {left: 0;}
+  to {left: calc(100vw - 30px);}
+}

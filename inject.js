@@ -5,6 +5,8 @@ var findPaywallInterval;
 var PAYWALLID = "gateway-content"; // Used to query the paywall div
 var PAYWALLBTN = 'css-l33adv'; // Used to style our button
 var PAYWALLOVERLAY = "css-1bd8bfl"; // Used to remove paywall overlay
+var PAYWALLCONTENT = "css-1n69xkm";
+var PAYWALLSUBHEAD = "css-184j79q-RegiWallSubhead"; // Used to add our own text
 var MAINCONTENTAREA = "css-mcm29f"; // Used to reenable scrolling
 var SUBTITLE = "article-summary"; // Used to seed the article
 var PARAGRAPHS = "css-axufdj"; // Used to remove/update paragraphs
@@ -48,22 +50,22 @@ function findPaywall() {
 
 function makeFakeNews() {
 	// Do runway stuff
-	var prompt = document.getElementsByTagName("h1")[0].innerHTML +  document.getElementById(SUBTITLE).innerHTML;
-	const inputs = {
-	  "prompt": prompt,
-	  "max_characters": 1024,
-	  "top_p": 0.9,
-	  "seed": 1000
-	};
-
-	// TODO: do this iteratively and fill out some set of the paragraphs
-	model.query(inputs).then(outputs => {
-	  const { generated_text, encountered_end } = outputs;
-		// removeScanner();
-		removePayWall();
-		clearRealArticle();
-		document.getElementsByClassName(PARAGRAPHS)[0].innerHTML = generated_text.split(prompt)[1];
-	});
+	// var prompt = document.getElementsByTagName("h1")[0].innerHTML +  document.getElementById(SUBTITLE).innerHTML;
+	// const inputs = {
+	//   "prompt": prompt,
+	//   "max_characters": 1024,
+	//   "top_p": 0.9,
+	//   "seed": 1000
+	// };
+	//
+	// // TODO: do this iteratively and fill out some set of the paragraphs
+	// model.query(inputs).then(outputs => {
+	//   const { generated_text, encountered_end } = outputs;
+	// 	// removeScanner();
+	// 	removePayWall();
+	// 	clearRealArticle();
+	// 	document.getElementsByClassName(PARAGRAPHS)[0].innerHTML = generated_text.split(prompt)[1];
+	// });
 
 	addScanner();
 
@@ -73,6 +75,8 @@ function addScanner() {
 	var scannerBar = document.createElement("div");
 	scannerBar.className = "scanner-bar";
 	document.getElementsByClassName(PAYWALLOVERLAY)[0].appendChild(scannerBar);
+	//document.getElementsByClassName(PAYWALLCONTENT)[0]
+
 }
 
 
