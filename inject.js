@@ -51,22 +51,31 @@ function findPaywall() {
 
 function makeFakeNews() {
 	// Do runway stuff
-	// var prompt = document.getElementsByTagName("h1")[0].innerHTML +  document.getElementById(SUBTITLE).innerHTML;
-	// const inputs = {
-	//   "prompt": prompt,
-	//   "max_characters": 1024,
-	//   "top_p": 0.9,
-	//   "seed": 1000
-	// };
-	//
-	// // TODO: do this iteratively and fill out some set of the paragraphs
-	// model.query(inputs).then(outputs => {
-	//   const { generated_text, encountered_end } = outputs;
-	// 	// removeScanner();
-	// 	removePayWall();
-	// 	clearRealArticle();
-	// 	document.getElementsByClassName(PARAGRAPHS)[0].innerHTML = generated_text.split(prompt)[1];
-	// });
+	var prompt = document.getElementsByTagName("h1")[0].innerHTML +  document.getElementById(SUBTITLE).innerHTML;
+	const inputs = {
+	  "prompt": prompt,
+	  "max_characters": 1024,
+	  "top_p": 0.9,
+	  "seed": 1000
+	};
+	
+	// TODO: do this iteratively and fill out some set of the paragraphs
+	model.query(inputs).then(outputs => {
+	  const { generated_text, encountered_end } = outputs;
+		// removeScanner();
+		removePayWall();
+		clearRealArticle();
+
+		var textOutput = generated_text.split(prompt)[1];
+		console.log("textOutput raw" + textOutput)
+		var deleteThisPartOfTheString = textOutput.split('.').pop();
+		
+		textOutput = textOutput.substring(0,textOutput.length - deleteThisPartOfTheString.length);	
+
+		//var generated_textTrimmed = generated_text.substring(0,generated_text.length - deleteThisPartOfTheString.length);	
+		
+		document.getElementsByClassName(PARAGRAPHS)[0].innerHTML = textOutput;
+	});
 
 	addScanner();
 
