@@ -1,5 +1,7 @@
 var paywallFound = false;
 var findPaywallInterval;
+var fakeNewsButton;
+var paywall;
 
 // NYTIMES Class & ID Names
 var PAYWALLID = "gateway-content"; // Used to query the paywall div
@@ -25,15 +27,14 @@ const model = new rw.HostedModel({
 
 function findPaywall() {
 	if (!paywallFound) {
-		var paywall = document.getElementById(PAYWALLID);
+		paywall = document.getElementById(PAYWALLID);
 
 		if (paywall) {
 			clearInterval(findPaywallInterval);
 			paywallFound = true;
 
 			// Create fake news button
-			// TODO: style button
-			var fakeNewsButton = document.createElement('button');
+			fakeNewsButton = document.createElement('button');
 			fakeNewsButton.id = 'injected-button';
 			// This isn't doing anything anymore
 			// TODO: find the new class for nytimes button and use it?
@@ -75,8 +76,14 @@ function addScanner() {
 	var scannerBar = document.createElement("div");
 	scannerBar.className = "scanner-bar";
 	document.getElementsByClassName(PAYWALLOVERLAY)[0].appendChild(scannerBar);
-	//document.getElementsByClassName(PAYWALLCONTENT)[0]
+	document.getElementsByClassName(PAYWALLCONTENT)[0].remove();
+	fakeNewsButton.remove();
 
+	// Create creating fake news text
+	var processingText = document.createElement('div');
+	processingText.className = PAYWALLSUBHEAD;
+	processingText.innerHTML = "Generating your fake news, please wait...";
+	paywall.appendChild(processingText);
 }
 
 
