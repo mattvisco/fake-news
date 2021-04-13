@@ -21,6 +21,7 @@
     {
       "run_at": "document_end",
       "matches": ["*://*.nytimes.com/*"],
+      "css": ["inject-style.css"],
       "js": [
         "hosted-model.js",
         "inject.js"

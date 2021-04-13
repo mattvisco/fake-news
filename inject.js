@@ -36,7 +36,7 @@ function findPaywall() {
 			// This isn't doing anything anymore
 			// TODO: find the new class for nytimes button and use it?
 			fakeNewsButton.className = PAYWALLBTN;
-			fakeNewsButton.innerHTML = "Create Fake News";
+			fakeNewsButton.innerHTML = "Go Behind The Paywall";
 			fakeNewsButton.style.backgroundColor = "red";
 			fakeNewsButton.style.alignText = "center";
 			fakeNewsButton.onclick = makeFakeNews;
@@ -55,19 +55,28 @@ function makeFakeNews() {
 	  "top_p": 0.9,
 	  "seed": 1000
 	};
+
 	// TODO: do this iteratively and fill out some set of the paragraphs
 	model.query(inputs).then(outputs => {
 	  const { generated_text, encountered_end } = outputs;
+		// removeScanner();
+		removePayWall();
+		clearRealArticle();
 		document.getElementsByClassName(PARAGRAPHS)[0].innerHTML = generated_text.split(prompt)[1];
 	});
 
+	addScanner();
 
-	// Get rid of paywall
-	var paywall = document.getElementById(PAYWALLID);
-	paywall.style.display = "none";
-	document.getElementsByClassName(PAYWALLOVERLAY)[0].style.display = "none";
-	document.getElementsByClassName(MAINCONTENTAREA)[0].style.overflow = "scroll";
+}
 
+function addScanner() {
+	var scannerBar = document.createElement("div");
+	scannerBar.className = "scanner-bar";
+	document.getElementsByClassName(PAYWALLOVERLAY)[0].appendChild(scannerBar);
+}
+
+
+function clearRealArticle() {
 	// Empty text from paragraphs
 	var paragraphs = document.getElementsByClassName(PARAGRAPHS);
 	for(var i = 0; i < paragraphs.length; i++) {
@@ -81,4 +90,11 @@ function makeFakeNews() {
 	var caption = document.getElementsByClassName(CAPTIONS)[0];
 	console.log(caption);
 	caption.style.display = "none";
+}
+
+function removePayWall() {
+	var paywall = document.getElementById(PAYWALLID);
+	paywall.style.display = "none";
+	document.getElementsByClassName(PAYWALLOVERLAY)[0].style.display = "none";
+	document.getElementsByClassName(MAINCONTENTAREA)[0].style.overflow = "scroll";
 }
