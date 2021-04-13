@@ -56,7 +56,7 @@ function makeFakeNews() {
 	  "prompt": prompt,
 	  "max_characters": 1024,
 	  "top_p": 0.9,
-	  "seed": 1000
+	  "seed": Math.floor(Math.random() * 1000)
 	};
 	
 	// TODO: do this iteratively and fill out some set of the paragraphs
@@ -71,8 +71,6 @@ function makeFakeNews() {
 		var deleteThisPartOfTheString = textOutput.split('.').pop();
 		
 		textOutput = textOutput.substring(0,textOutput.length - deleteThisPartOfTheString.length);	
-
-		//var generated_textTrimmed = generated_text.substring(0,generated_text.length - deleteThisPartOfTheString.length);	
 		
 		document.getElementsByClassName(PARAGRAPHS)[0].innerHTML = textOutput;
 	});
