@@ -80,7 +80,7 @@ function generateText(prompt, currIndex) {
 			textOutput = textOutput.substring(0,textOutput.length - deleteThisPartOfTheString.length);
 			generatedTextArray.push(textOutput);
 
-			var newPrompt = textOutputSplit[textOutputSplit.length-2] + '.' + textOutputSplit[textOutputSplit.length-1];
+			var newPrompt = textOutputSplit[textOutputSplit.length-2] + '.' + textOutputSplit[textOutputSplit.length-1] + '.';
 			currIndex--;
 
 			generateText(newPrompt, currIndex);
