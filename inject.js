@@ -2,6 +2,7 @@ var paywallFound = false;
 var findPaywallInterval;
 var fakeNewsButton;
 var paywall;
+var generatedTextArray = [];
 
 // NYTIMES Class & ID Names
 var PAYWALLID = "gateway-content"; // Used to query the paywall div
@@ -14,6 +15,8 @@ var SUBTITLE = "article-summary"; // Used to seed the article
 var TEXTCONTAINERS = "StoryBodyCompanionColumn";
 var PARAGRAPHS = "css-axufdj"; // Used to remove/update paragraphs
 var IMAGES = "css-79elbk"; // Used to remove images
+
+var TOTALTEXTGENERATION = 2;
 
 const model = new rw.HostedModel({
 	url: "https://ny-times-articles-1500-steps.hosted-models.runwayml.cloud/v1/",
@@ -50,8 +53,15 @@ function findPaywall() {
 }
 
 function makeFakeNews() {
-	// Do runway stuff
+	// Seed article with summary
 	var prompt = document.getElementsByTagName("h1")[0].innerHTML +  document.getElementById(SUBTITLE).innerHTML;
+	generateText(prompt, TOTALTEXTGENERATION); // Only creating two articles
+
+	addScanner();
+}
+
+function generateText(prompt, currIndex) {
+	// Set runway stuff
 	const inputs = {
 	  "prompt": prompt,
 	  "max_characters": 1024,
@@ -59,21 +69,39 @@ function makeFakeNews() {
 	  "seed": Math.floor(Math.random() * 1000)
 	};
 
-	// TODO: do this iteratively and fill out some set of the paragraphs
-	model.query(inputs).then(outputs => {
-	  const { generated_text, encountered_end } = outputs;
+	if (currIndex > 0) {
+		model.query(inputs).then(outputs => {
+		  const { generated_text, encountered_end } = outputs;
+
+			var textOutput = generated_text.split(prompt)[1];
+			var textOutputSplit = textOutput.split('.');
+			var deleteThisPartOfTheString = textOutputSplit.pop();
+
+			textOutput = textOutput.substring(0,textOutput.length - deleteThisPartOfTheString.length);
+			generatedTextArray.push(textOutput);
+
+			var newPrompt = textOutputSplit[textOutputSplit.length-2] + '.' + textOutputSplit[textOutputSplit.length-1];
+			currIndex--;
+
+			generateText(newPrompt, currIndex);
+		});
+	} else {
 		removePayWall();
 		clearRealArticle();
+		addFakeNews();
+	}
+}
 
-		var textOutput = generated_text.split(prompt)[1];
-		var deleteThisPartOfTheString = textOutput.split('.').pop();
-
-		textOutput = textOutput.substring(0,textOutput.length - deleteThisPartOfTheString.length);
-		
-		document.getElementsByClassName(PARAGRAPHS)[0].innerHTML = textOutput;
-	});
-
-	addScanner();
+function addFakeNews() {
+	// TODO: make this smarter
+	for(var i = 0; i < generatedTextArray.length; i++) {
+		if(i == 0) {
+			document.getElementsByClassName(PARAGRAPHS)[0].innerHTML = generatedTextArray[i];
+		} else {
+			// TODO: find where to put this one
+			document.getElementsByClassName(PARAGRAPHS)[10].innerHTML = generatedTextArray[i];
+		}
+	}
 }
 
 function addScanner() {
