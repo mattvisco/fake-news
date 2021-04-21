@@ -17,3 +17,7 @@
   from {left: 0;}
   to {left: calc(100vw - 30px);}
 }
+
+#injected-button:hover {
+  background-color: black;
+}
