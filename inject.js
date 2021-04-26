@@ -17,9 +17,15 @@ var TEXTCONTAINERS = "StoryBodyCompanionColumn";
 var PARAGRAPHS = "css-axufdj"; // Used to remove/update paragraphs
 var IMAGES = "css-79elbk"; // Used to remove images
 var SUBHEADERSTYLE = "css-w6ymp8";
-var DESCRIPTIONSTYLE = "css-19hdyf3";
+var FOOTER = "css-19hdyf3";
 
-var TOTALTEXTGENERATION = 2;
+var TOTALTEXTGENERATION = 0;
+
+var FAKENEWSBUTTONTXT = "Go Behind The Paywall";
+var FAKENEWSTAGLINETXT = "It might be wrong, but at least it's free.";
+var FAKENEWSDESCRIPTIONTXT = "Behind the paywall is an experiment that uses artificial intelligence to dream up what article might be hidden behind the paywall. Read more <a class='css-19hdyf3' href='https://medium.com/' target='_blank'>here.</a>";
+
+var FOOTERTXT = "<p>This article was generated using a <a class='css-1rj8to8' href='https://openai.com/blog/better-language-models/' target='_blank'>GPT-2</a> model trained on <a class='css-1rj8to8' href='https://www.kaggle.com/nzalake52/new-york-times-articles?select=nytimes_news_articles.txt' target='_blank'>a dataset of previous articles from New York Times.</a> The text generated is likely to be <a class='css-1rj8to8' href='https://arxiv.org/pdf/2102.04130.pdf' target='_blank'>biased</a> and potentially <a class='css-1rj8to8' href='https://onezero.medium.com/for-some-reason-im-covered-in-blood-gpt-3-contains-disturbing-bias-against-muslims-693d275552bf' target='_blank'>offensive.</a> The hope of this project is to start a conversation about the spread of fake news and the future of automated journalism. Read more about the project <a class='css-1rj8to8' href='https://medium.com/' target='_blank'>here.</a></p>";
 
 const model = new rw.HostedModel({
 	url: "https://ny-times-articles-1500-steps.hosted-models.runwayml.cloud/v1/",
@@ -43,7 +49,7 @@ function findPaywall() {
 			fakeNewsButton = document.createElement('button');
 			fakeNewsButton.id = 'injected-button';
 			fakeNewsButton.className = PAYWALLBTN;
-			fakeNewsButton.innerHTML = "Go Behind The Paywall";
+			fakeNewsButton.innerHTML = FAKENEWSBUTTONTXT;
 			fakeNewsButton.style.backgroundColor = "red";
 			fakeNewsButton.style.alignText = "center";
 			fakeNewsButton.onclick = makeFakeNews;
@@ -51,14 +57,13 @@ function findPaywall() {
 			fakeNewsTagline = document.createElement('h2');
 			fakeNewsTagline.id = 'injected-tagline';
 			fakeNewsTagline.className = SUBHEADERSTYLE;
-			fakeNewsTagline.innerHTML = "It might be wrong, but at least it's free.";
+			fakeNewsTagline.innerHTML = FAKENEWSTAGLINETXT;
 			fakeNewsTagline.style.marginBottom = "16px";
-
 
 			fakeNewsDescription = document.createElement('p');
 			fakeNewsDescription.id = 'injected-description';
-			fakeNewsDescription.className = DESCRIPTIONSTYLE;
-			fakeNewsDescription.innerHTML = "Behind the paywall is an experiment that uses artificial intelligence to dream up what article might be hidden behind the paywall. Read more <a class='css-19hdyf3' href='https://medium.com/' target='_blank'>here.</a>";
+			fakeNewsDescription.className = FOOTER; // Footer has the style we lookin fooo
+			fakeNewsDescription.innerHTML = FAKENEWSDESCRIPTIONTXT;
 			fakeNewsDescription.style.marginBottom = "80px";
 			fakeNewsDescription.style.width = "600px";
 			fakeNewsDescription.style.textAlign = "center";
@@ -107,6 +112,7 @@ function generateText(prompt, currIndex) {
 	} else {
 		removePayWall();
 		clearRealArticle();
+		// addFooter(); // Not working at the moment
 		addFakeNews();
 	}
 }
@@ -119,6 +125,19 @@ function addFakeNews() {
 		} else {
 			// TODO: find where to put this one
 			document.getElementsByClassName(PARAGRAPHS)[10].innerHTML = generatedTextArray[i];
+		}
+	}
+}
+
+function addFooter() {
+	// The footer gets lazy loaded so when we look for it, it doesn't exist yet
+	// TODO: watch for mutations in the DOM, replace footer when it appears
+	var footers = document.getElementsByClassName(FOOTER);
+	for(var i = 0; i < footers.length; i++) {
+		console.log(footers[i]);
+		footers[i].innerHTML = "";
+		if(i == 0) {
+			footers[0].innerHTML = FOOTERTXT;
 		}
 	}
 }
